@@ -3,7 +3,7 @@ const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // find all categories
   // be sure to include its associated Products
 	try {
@@ -49,9 +49,7 @@ router.delete('/:id', (req, res) => {
       where: { id: req.params.id }
     });
     if (!categoryData) {
-      res.status(404).json({
-        message: 'No category found with this id!'
-      });
+      res.status(404).json({ message: '404 ID NOT FOUND' });
       return;
     }
     res.status(200).json(categoryData);
