@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Products
 	try {
 		const categoryData = await Category.findAll({
-			include: [product]
+			include: [Product]
 		});
 		res.json(categoryData);
 	} catch (err) {
@@ -16,14 +16,22 @@ router.get('/', async (req, res) => {
 	};
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
-	Category.findOne({ 
-		where: { id: req.params.id },
-		include: [Product]
-	}).then(category => res.status(200).json(category))
-	.catch(err => res.status(400).json(err))
+	try{
+		const categoryID = await 	Category.findOne({ 
+			where: { id: req.params.id },
+			include: [Product]
+	});
+	if (!categoryID) {
+		res.status(404).json({ message: '404 ID NOT FOUND' });
+		return;
+	}
+	res.status(200).json(categoryID);
+} catch (err) {
+	res.status(500).json(err);
+}
 });
 
 router.post('/', (req, res) => {
@@ -42,7 +50,7 @@ router.put('/:id', (req, res) => {
     .catch(err => res.status(400).json(err))
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete a category by its `id` value
 	try {
     const categoryData = await Category.destroy({
